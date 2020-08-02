@@ -1,2 +1,2 @@
-# NetEase-could-music
-my netease could music project
+# NetEase-cloud-music
+my netease cloud music project
