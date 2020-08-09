@@ -4,6 +4,7 @@
     <Tabbar></Tabbar>
     <!--指定路由出口:渲染Recommend.Vue中的内容-->
     <router-view></router-view>
+    <!--播放器-->
     <Player></Player>
   </div>
 </template>
