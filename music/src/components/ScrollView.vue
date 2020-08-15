@@ -75,11 +75,16 @@ export default {
         fn(this.y) // 调用外界的回调函数，把当前的偏移位传递给外界
       })
     },
+    // 100ms后创建列表播放的歌单显示，用iscroll刷新列表播放的歌单
     refresh () {
       setTimeout(() => {
         // 延迟100ms后刷新
         this.iscroll.refresh()
       }, 100)
+    },
+    // scrollTo方法的用途:滚动页面元素到指定位置
+    scrollTo (x, y, time) { // x方向上滚动范围,y方向上滚动范围,滚动所需时间
+      this.iscroll.scrollTo(x, y, time)
     }
   }
 }

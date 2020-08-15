@@ -30,19 +30,22 @@ export default {
       'setSongDetail'
     ]),
     selectMusic (id) {
+      // console.log(id)
       /*
-      * 通过分发 Action的方式：在界面上触发Actions中的方法
-      * this.$store.dispatch('setFullScreen', true)
-      * */
+        * 通过分发 Action的方式：在界面上触发Actions中的方法
+        * this.$store.dispatch('setFullScreen', true)
+        * */
       this.setFullScreen(true) // 触发通过...mapActions辅助函数映射的actions中的'setFullScreen'方法
-      this.setSongDetail([id])
+      this.setSongDetail([id]) // 调用actions中的‘setSongDetail’方法 向服务器发送获取歌曲ID的请求
     },
+    // 播放列表中全部歌曲 的方法
     selectAllMusic () {
       this.setFullScreen(true)
+      /* map() 方法返回一个新数组，数组中的元素为原始数组元素调用函数处理后的值。 */
       const ids = this.playlist.map(function (item) {
         return item.id
       })
-      console.log(ids)
+      // console.log(ids)
       this.setSongDetail(ids)
     }
   }

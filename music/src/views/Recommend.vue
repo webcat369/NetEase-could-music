@@ -11,7 +11,7 @@
                    <Personalized :personalized="personalized" :title="'推荐歌单'" @select="fatherSelectItem" :type="'personalized'"></Personalized>
                     <!-- album是最新专辑 -->
                    <Personalized :personalized="album" :title="'最新专辑'" @select="fatherSelectItem" :type="'album'"></Personalized>
-                   <Songlist :newsong="newsong"></Songlist>
+                   <Songlist :songs="songs"></Songlist>
                </div>
            </ScrollView>
        </div>
@@ -47,7 +47,7 @@ export default {
       banners: [],
       personalized: [],
       album: [],
-      newsong: []
+      songs: []
     }
   },
   methods: {
@@ -90,7 +90,29 @@ export default {
       })
     getNewSong()
       .then((data) => {
-        this.newsong = data.result
+        // this.songs = data.result
+        // 处理最新音乐歌单中歌曲的数据
+        // console.log(data.result)
+        const list = []
+        data.result.forEach((value) => {
+          const obj = {}
+          // console.log(value)
+          obj.id = value.id
+          obj.name = value.name
+          obj.picUrl = value.song.album.picUrl
+          let singer = ''
+          for (let i = 0; i < value.song.artists.length; i++) {
+            if (i === 0) {
+              singer = value.song.artists[i].name
+            } else {
+              singer += '-' + value.song.artists[i].name
+            }
+          }
+          obj.singer = singer
+          list.push(obj)
+        })
+        this.songs = list
+        // console.log(this.songs)
       })
       .catch((err) => {
         console.log(err)

@@ -13,20 +13,20 @@
                         <p v-else>随机播放</p>
                     </div>
                     <div class="top-right">
-                        <div class="del"></div>
+                        <div class="del" @click="delAll"></div>
                     </div>
                 </div>
                 <div class="player-middle">
                     <ScrollView ref="scrollView">
-                        <ul>
-                            <li class="item" v-for="value in songs" :key="value.id">
+                        <ul ref="play">
+                            <li class="item" v-for="(value,index) in songs" :key="value.id" @click="selectMusic(index)">
                                 <div class="item-left">
-                                    <div class="item-play" @click.stop="play" ref="play"></div>
+                                    <div class="item-play" @click.stop="play" v-show="currentIndex === index"></div>
                                     <p>{{value.name}}</p>
                                 </div>
                                 <div class="item-right">
-                                    <div class="item-favorite"></div>
-                                    <div class="item-del"></div>
+                                    <div class="item-favorite" @click.stop="favorite(value)" :class="{'active':isFavorite(value)}"></div>
+                                    <div class="item-del" @click.stop="del(index)"></div>
                                 </div>
                             </li>
                         </ul>
@@ -47,6 +47,7 @@ import Velocity from 'velocity-animate'
 // 安装好的velocity-animate中有已经封装好的velocity.ui.js插件来实现动画效果
 import 'velocity-animate/velocity.ui'
 import { mapActions, mapGetters } from 'vuex'
+// 导入 保存播放模式的文件
 import modeType from '../../store/mode-Type'
 
 export default {
@@ -58,12 +59,11 @@ export default {
     ...mapActions([
       'setIsPlaying',
       'setModeType',
-      'setShowListPlayer'
+      'setShowListPlayer',
+      'setDelSong',
+      'setCurrentIndex',
+      'setFavoriteSong'
     ]),
-    // 监听列表播放器点击关闭按钮后隐藏
-    hidden () {
-      this.setShowListPlayer(false)
-    },
     // Vue 提供了 transition 的封装组件,可以给任何元素和组件添加进入/离开过渡
     // 使用钩子函数执行 开始动画
     enter (el, done) { // 执行动画的元素 动画完成后执行的回调
@@ -71,7 +71,7 @@ export default {
         done()
       })
     },
-    // 使用钩子函数执行
+    // 使用钩子函数执行 结束动画
     leave (el, done) {
       Velocity(el, 'transition.perspectiveUpOut', { duration: 500 }, function () {
         done()
@@ -81,6 +81,7 @@ export default {
     play () {
       this.setIsPlaying(!this.isPlaying)
     },
+    // 控制播放模式“状态”的切换 -- 更改的是 vuex 的 state 的保存到“控制播放模式状态改变”的共享数据
     mode () {
       if (this.modeType === modeType.loop) {
         this.setModeType(modeType.one)
@@ -89,6 +90,33 @@ export default {
       } else if (this.modeType === modeType.random) {
         this.setModeType(modeType.loop)
       }
+    },
+    // 监听列表播放器点击‘关闭按钮’后隐藏
+    hidden () {
+      this.setShowListPlayer(false)
+    },
+    // 删除指定的列表播放器歌单中的歌曲
+    del (index) {
+      this.setDelSong(index)
+    },
+    // 删除列表播放器歌单中所有歌曲
+    delAll () {
+      this.setDelSong()
+    },
+    // 切换歌曲方法
+    selectMusic (index) {
+      this.setCurrentIndex(index)
+    },
+    // 收藏歌曲
+    favorite (value) { // value:被点击喜爱的那首歌
+      this.setFavoriteSong(value)
+    },
+    // 判断传入的这首歌是否被收藏,如果被收藏就通过该方法 给标签'动态绑定类名'来切换收藏图标
+    isFavorite (song) {
+      const result = this.favoriteList.find(function (currentValue) {
+        return currentValue.id === song.id
+      })
+      return result !== undefined
     }
   },
   computed: {
@@ -96,19 +124,24 @@ export default {
       'isPlaying',
       'modeType',
       'isShowListPlayer',
-      'songs'
+      'songs',
+      'currentIndex',
+      'favoriteList'
     ])
   },
   watch: {
     // 控制播放按钮“图标”的切换 -- CSS中类名的变化
     isPlaying (newValue, oldValue) {
       if (newValue) { // newValue如果为真，就播放按钮“图标”就切换到“播放模式”
-        console.log(this.$refs.play, '=====')
-        this.$refs.play[0].classList.add('item-active')
+        // console.log(this.$refs.play, '=====')
+        // 带有ref="play"标签被带有v-for="(value,index) in songs"包裹时，用this.$refs.play[0].classList.add('item-active')
+        this.$refs.play.classList.add('item-active')
       } else {
-        this.$refs.play[0].classList.remove('item-active')
+        // this.$refs.play[0].classList.remove('item-active')
+        this.$refs.play.classList.remove('item-active')
       }
     },
+    // 控制播放按钮“图标”的切换 -- CSS中类名的变化
     modeType (newValue, oldValue) {
       if (newValue === modeType.loop) {
         this.$refs.mode.classList.remove('random')
@@ -125,7 +158,7 @@ export default {
       // 监听ListPlayer显示后
       if (newValue) {
         // 在显示全部播放的歌曲后，重新计算ListPlayer的高度，有了高度就能计算出他的滚动范围
-        this.$refs.scrollView.refresh() // 刷新
+        this.$refs.scrollView.refresh() // 调用scrollView组件中的refresh()方法-刷新列表播放的歌单
       }
     }
   }
@@ -184,6 +217,15 @@ export default {
         .player-middle{
             height: 700px;
             overflow: hidden;
+            ul{
+                &.item-active{    /*用此类名覆盖.item-play，使播放按钮图标改变*/
+                   .item{
+                       .item-play{
+                           @include bg_img('../../assets/images/small_pause');
+                       }
+                   }
+                }
+            }
            .item{
                height: 100px;
                border-top: 1px solid #ccc;
@@ -198,13 +240,10 @@ export default {
                    display: flex;
                    align-items: center; //侧轴方向:垂直居中
                    .item-play{
-                       width: 84px;
-                       height: 84px;
-                       @include bg_img('../../assets/images/small_play');
+                       width: 60px;
+                       height: 60px;
                        margin-right: 20px;
-                       &.active{    /*用此类名覆盖.play，使播放按钮图标改变*/
-                           @include bg_img('../../assets/images/pause');
-                       }
+                       @include bg_img('../../assets/images/small_play');
                    }
                    p{
                        @include font_size($font_medium_s);
@@ -218,7 +257,10 @@ export default {
                    .item-favorite{
                        width: 56px;
                        height: 56px;
-                       @include bg_img('../../assets/images/small_favorite');
+                       @include bg_img('../../assets/images/small_un_favorite');
+                       &.active{
+                           @include bg_img('../../assets/images/small_favorite');
+                       }
                    }
                    .item-del{
                        width: 52px;

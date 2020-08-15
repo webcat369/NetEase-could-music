@@ -14,6 +14,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'Personalized',
   // 传递数据：prop:["XXX"]

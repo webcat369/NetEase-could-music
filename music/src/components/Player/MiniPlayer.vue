@@ -34,19 +34,16 @@ export default {
   methods: {
     ...mapActions([
       'setFullScreen',
-      'setShowMiniPlayer',
       'setIsPlaying',
       'setShowListPlayer'
     ]),
-    // 监听迷你播放器中点击三条杠图标显示列表播放器
+    // 监听‘迷你播放器’中点击三条杠图标显示‘列表播放器’
     showList () {
       this.setShowListPlayer(true)
     },
     showNormalPlayer () {
       // NormalPlayer.vue界面显示
       this.setFullScreen(true)
-      // MiniPlayer.vue界面隐藏
-      this.setShowMiniPlayer(false)
     },
     // Vue 提供了 transition 的封装组件,可以给任何元素和组件添加进入/离开过渡
     // 使用钩子函数执行 开始动画
@@ -78,7 +75,7 @@ export default {
     // 控制播放按钮“图标”的切换 -- CSS中类名的变化
     isPlaying (newValue, oldValue) {
       if (newValue) { // newValue如果为真，就播放按钮“图标”就切换到“播放模式”
-        console.log(this.$refs.play)
+        // console.log(this.$refs.play)
         this.$refs.play.classList.add('active')
         this.$refs.cd.classList.add('active')
       } else {
@@ -116,8 +113,8 @@ export default {
                margin-right: 20px;
                margin-left: 30px;
                animation: sport 3s linear infinite;
-               animation-play-state: paused;
-               &.active{
+               animation-play-state: paused; //开始动画为 暂停状态
+               &.active{  // 播放按钮被点击 开始动画
                    animation-play-state: running;
                }
            }
@@ -126,7 +123,7 @@ export default {
                display: flex;
                flex-direction: column; // 改变主轴的方向：垂直方向
                justify-content: center; //主轴对齐方式：垂直居中
-               align-items: center; //侧轴对齐方式：水平居中
+               /*align-items: center; //侧轴对齐方式：水平居中*/
                h3{
                    @include font_size($font_medium);
                    @include font_color();

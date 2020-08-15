@@ -11,8 +11,8 @@
         <div class="normal-player" v-show="this.isFullScreen" >
             <div class="player-wrapper">
                 <PlayerHeader></PlayerHeader>
-                <PlayerMiddle></PlayerMiddle>
-                <PlayerBottom></PlayerBottom>
+                <PlayerMiddle :currentTime="currentTime"></PlayerMiddle>
+                <PlayerBottom :totalTime="totalTime" :currentTime="currentTime"></PlayerBottom>
             </div>
             <!--全屏播放器的背景图和蒙板-->
             <div class="player-bg">
@@ -76,9 +76,25 @@ export default {
     }
   },
   watch: {
+    // 调用‘当前播放歌曲’的详细信息，只要当前的歌曲发生变化，就去获取发生变化以后的'歌词'
     currentSong (newValue, oldValue) {
+      if (newValue.id === undefined) { // 判断`如果没有歌曲就不用获取'歌词'`的情况
+        return
+      }
       // console.log(newValue)
-      this.setSongLyric(newValue.id)
+      this.setSongLyric(newValue.id) // 只要当前的歌曲发生变化，就去获取发生变化以后的'歌词'
+    }
+  },
+  props: {
+    totalTime: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    currentTime: {
+      type: Number,
+      default: 0,
+      required: true
     }
   }
 }

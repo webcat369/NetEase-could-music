@@ -2,11 +2,12 @@
     <div class="header" @click="changeFn">
         <div class="header-left"></div>
         <p class="header-title">知播渔音乐</p>
-        <div class="header-right"></div>
+        <div class="header-right" @click.stop="accountClick"></div>
     </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Header',
   data () {
@@ -16,6 +17,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'setShowMiniPlayer',
+      'setIsPlaying'
+    ]),
     changeFn () {
       this.index++
       if (this.index >= this.themes.length) {
@@ -25,7 +30,23 @@ export default {
       // 通过document.documentElement可以拿到html标签
       // 通过setAttribute('data-theme',  this.themes[this.index])设置一个自定义属性'data-theme'，取值就是拿到的参数
       document.documentElement.setAttribute('data-theme', this.themes[this.index])
+    },
+    // 点击个人中心按钮给http中加上一个account地址
+    accountClick () {
+      this.$router.push('/account')
+      if (this.isShowMiniPlayer === true) {
+        this.setShowMiniPlayer(!this.isShowMiniPlayer)
+      }
+      if (this.isPlaying === true) {
+        this.setIsPlaying(!this.isPlaying)
+      }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isShowMiniPlayer',
+      'isPlaying'
+    ])
   }
 }
 </script>
