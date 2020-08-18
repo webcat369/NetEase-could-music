@@ -1,8 +1,20 @@
 <template>
+    <!--
     <div class="header" @click="changeFn">
         <div class="header-left"></div>
         <p class="header-title">知播渔音乐</p>
         <div class="header-right" @click.stop="accountClick"></div>
+    </div>
+    -->
+    <!--改造头部代码,将头部封装成一个组件-->
+    <div class="header" @click="changeFn">
+        <div class="left">
+            <slot name="left">左边</slot>
+        </div>
+        <slot name="middle">中间</slot>
+        <div class="right">
+            <slot name="right">右边</slot>
+        </div>
     </div>
 </template>
 
@@ -21,6 +33,7 @@ export default {
       'setShowMiniPlayer',
       'setIsPlaying'
     ]),
+    // 公共的换肤方法
     changeFn () {
       this.index++
       if (this.index >= this.themes.length) {
@@ -34,12 +47,6 @@ export default {
     // 点击个人中心按钮给http中加上一个account地址
     accountClick () {
       this.$router.push('/account')
-      if (this.isShowMiniPlayer === true) {
-        this.setShowMiniPlayer(!this.isShowMiniPlayer)
-      }
-      if (this.isPlaying === true) {
-        this.setIsPlaying(!this.isPlaying)
-      }
     }
   },
   computed: {
@@ -60,23 +67,14 @@ export default {
     @include bg_color();
     display: flex;
     justify-content: space-between;
-    .header-left,.header-right{
+    .left,.right{
         width: 84px;
         height: 84px;
         margin-top: 8px;
-    }
-    .header-left{
-        @include bg_img('../assets/images/logo')
-    }
-    .header-right{
-        @include bg_img('../assets/images/account')
-    }
-    .header-title{
-        text-align: center;
-        line-height: 100px;
-        color: #fff;
-        font-weight: bold;
-        @include font_size($font_medium);
+        *{
+            width: 100%;
+            height: 100%;
+        }
     }
 }
 </style>

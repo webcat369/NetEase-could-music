@@ -19,10 +19,13 @@ import DetailTop from '../components/Detail/DetailTop'
 import DetailBottom from '../components/Detail/DetailBottom'
 /* 滚动组件 */
 import ScrollView from '../components/ScrollView'
-import { getPlayList, getAlbum } from '../api/index.js'
+import { getPlayList, getAlbum, getArtistsSongs, getTopList } from '../api/index.js'
+/* 统一管理SEO三大标签的插件 */
+import MateInfo from '../../vue-meta-info'
 
 export default {
   name: 'Detail',
+  metaInfo: MateInfo.detail,
   components: {
     DetailHeader,
     DetailTop,
@@ -54,6 +57,32 @@ export default {
             name: data.album.name,
             coverImgUrl: data.album.picUrl,
             tracks: data.songs
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else if (this.$route.params.type === 'singer') {
+      getArtistsSongs({ id: this.$route.params.id })
+        .then((data) => {
+          // console.log(data)
+          this.playlist = {
+            name: data.artist.name,
+            coverImgUrl: data.artist.picUrl,
+            tracks: data.hotSongs
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else if (this.$route.params.type === 'rank') {
+      getTopList({ id: this.$route.params.id })
+        .then((data) => {
+          // console.log(data)
+          this.playlist = {
+            name: data.playlist.name,
+            coverImgUrl: data.playlist.creator.backgroundUrl,
+            tracks: data.playlist.tracks
           }
         })
         .catch((err) => {

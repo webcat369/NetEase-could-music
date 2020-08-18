@@ -1,35 +1,27 @@
 <template>
-    <div class="header" @click="changeFn">
-        <div class="header-left" @click.stop="back"></div>
-        <ul class="header-title">
+    <Header class="header">
+        <div slot="left" class="header-left" @click.stop="back"></div>
+        <ul slot="middle" class="header-title">
             <li :class="{'active': switchNum === 0 }" @click.stop="switchItem(0)">我喜欢的</li>
             <li :class="{'active': switchNum === 1 }" @click.stop="switchItem(1)">最近听的</li>
         </ul>
-        <div class="header-right"></div>
-    </div>
+        <div slot="right" class="header-right"></div>
+    </Header>
 </template>
 
 <script>
+import Header from '../Header'
 export default {
   name: 'AccountHeader',
+  components: {
+    Header
+  },
   data () {
     return {
-      themes: ['theme', 'theme1', 'theme2'],
-      index: 0,
       switchNum: 0
     }
   },
   methods: {
-    changeFn () {
-      this.index++
-      if (this.index >= this.themes.length) {
-        this.index = 0
-      }
-      // 把拿到的theme,theme1,theme2三个参数保存成一个自定义属性，绑定在html标签上
-      // 通过document.documentElement可以拿到html标签
-      // 通过setAttribute('data-theme',  this.themes[this.index])设置一个自定义属性'data-theme'，取值就是拿到的参数
-      document.documentElement.setAttribute('data-theme', this.themes[this.index])
-    },
     back () {
       // 返回到上一页(推荐界面)
       window.history.back()

@@ -6,7 +6,7 @@ import VueRouter from 'vue-router'
 // import Rank from '../views/Rank'
 // import Search from '../views/Search'
 
-// 如何实现Vue组件的按需加载(异步加载)
+// 如何实现Vue组件的'按需加载'(异步加载)
 /* 推荐界面 */
 const Recommend = (resolve) => { // resolve是一个回调函数
   // 通过import异步加载组件，加载成功就调用.then()的方法
@@ -66,8 +66,26 @@ const routes = [
       }
     ]
   },
-  { path: '/singer', component: Singer },
-  { path: '/rank', component: Rank },
+  {
+    path: '/singer',
+    component: Singer,
+    children: [
+      {
+        path: 'detail/:id/:type',
+        component: Detail
+      }
+    ]
+  },
+  {
+    path: '/rank',
+    component: Rank,
+    children: [
+      {
+        path: 'detail/:id/:type',
+        component: Detail
+      }
+    ]
+  },
   { path: '/search', component: Search },
   { path: '/account', component: Account }
 ]
@@ -79,8 +97,9 @@ const router = new VueRouter({
             2.在服务端上面进行一些额外的配置
   * */
   // 注意点: 如果需要使用预渲染的插件, 那么Router的模式必须是history模式
-  mode: 'history',
-  // mode:  'hash',
+  // mode: 'history',// 使用history模式在项目上架后点击刷新会报出404错误
+  mode: 'history', // 如果需要使用预渲染插件,模式必须使用history模式,否则打包会失败
+  // mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })

@@ -33,9 +33,11 @@ import Personalized from '../components/Recommend/Personalized'
 import Songlist from '../components/Recommend/Songlist'
 /* 滚动组件 */
 import ScrollView from '../components/ScrollView'
-
+/* 统一管理SEO三大标签的插件 */
+import MateInfo from '../../vue-meta-info'
 export default {
   name: 'Recommend',
+  metaInfo: MateInfo.recommend,
   components: {
     Banner,
     Personalized,

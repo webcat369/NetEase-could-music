@@ -10,8 +10,11 @@
 <script>
 import AccountHeader from '../components/Account/AccountHeader'
 import AccountBottom from '../components/Account/AccountBottom'
+/* 统一管理SEO三大标签的插件 */
+import MateInfo from '../../vue-meta-info'
 export default {
   name: 'Account',
+  metaInfo: MateInfo.account,
   components: {
     AccountHeader,
     AccountBottom
